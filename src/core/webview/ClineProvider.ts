@@ -1237,6 +1237,12 @@ export class ClineProvider
 						window.AUDIO_BASE_URI = "${audioUri}"
 						window.MATERIAL_ICONS_BASE_URI = "${materialIconsUri}"
 						window.KILOCODE_BACKEND_BASE_URL = "${process.env.KILOCODE_BACKEND_BASE_URL ?? ""}"
+						window.DOCS_BASE_URL = "${process.env.DOCS_BASE_URL ?? "https://kilo.ai/docs"}"
+						window.SHOW_DOCUMENTATION_LINKS = ${process.env.SHOW_DOCUMENTATION_LINKS === "true"}
+						window.PROVIDERS_ENABLED = ${process.env.PROVIDERS_ENABLED === "true"}
+						window.MCP_MARKETPLACE_ENABLED = ${process.env.MCP_MARKETPLACE_ENABLED === "true"}
+						window.AGENT_MANAGER_ENABLED = ${process.env.AGENT_MANAGER_ENABLED === "true"}
+						window.FEEDBACK_ENABLED = ${process.env.FEEDBACK_ENABLED === "true"}
 					</script>
 					<title>Kilo Code</title>
 				</head>
@@ -1319,6 +1325,12 @@ export class ClineProvider
 				window.AUDIO_BASE_URI = "${audioUri}"
 				window.MATERIAL_ICONS_BASE_URI = "${materialIconsUri}"
 				window.KILOCODE_BACKEND_BASE_URL = "${process.env.KILOCODE_BACKEND_BASE_URL ?? ""}"
+				window.DOCS_BASE_URL = "${process.env.DOCS_BASE_URL ?? "https://kilo.ai/docs"}"
+				window.SHOW_DOCUMENTATION_LINKS = ${process.env.SHOW_DOCUMENTATION_LINKS === "true"}
+				window.PROVIDERS_ENABLED = ${process.env.PROVIDERS_ENABLED === "true"}
+				window.MCP_MARKETPLACE_ENABLED = ${process.env.MCP_MARKETPLACE_ENABLED === "true"}
+				window.AGENT_MANAGER_ENABLED = ${process.env.AGENT_MANAGER_ENABLED === "true"}
+				window.FEEDBACK_ENABLED = ${process.env.FEEDBACK_ENABLED === "true"}
 			</script>
             <title>Kilo Code</title>
           </head>

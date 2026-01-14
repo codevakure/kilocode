@@ -24,7 +24,7 @@ import {
 	ToggleSwitch,
 	// StandardTooltip, // kilocode_change: not used
 } from "@src/components/ui"
-import { buildDocLink } from "@src/utils/docLinks"
+import { buildDocLink, shouldShowDocLinks } from "@src/utils/docLinks"
 import { Section } from "@src/components/settings/Section"
 
 import { Tab, TabHeader } from "../common/Tab" // kilocode_change
@@ -67,13 +67,17 @@ const McpView = ({ onDone, hideHeader = false }: McpViewProps) => {
 						marginBottom: "10px",
 						marginTop: "5px",
 					}}>
-					<Trans i18nKey="mcp:description">
-						<VSCodeLink
-							href={buildDocLink("features/mcp/using-mcp-in-kilo-code", "mcp_settings")}
-							style={{ display: "inline" }}>
-							Learn More
-						</VSCodeLink>
-					</Trans>
+					{shouldShowDocLinks() ? (
+						<Trans i18nKey="mcp:description">
+							<VSCodeLink
+								href={buildDocLink("features/mcp/using-mcp-in-kilo-code", "mcp_settings")}
+								style={{ display: "inline" }}>
+								Learn More
+							</VSCodeLink>
+						</Trans>
+					) : (
+						t("mcp:descriptionNoLink")
+					)}
 				</div>
 
 				{/* <McpEnabledToggle /> kilocode_change: we always enable MCP */}
@@ -186,21 +190,23 @@ const McpView = ({ onDone, hideHeader = false }: McpViewProps) => {
 							You can find the MCP Marketplace under Settings &gt; MCP Servers &gt; Marketplace
 						</div>
 						{/* kilocode_change end */}
-						<div
-							style={{
-								marginTop: "15px",
-								fontSize: "12px",
-								color: "var(--vscode-descriptionForeground)",
-							}}>
-							<VSCodeLink
-								href={buildDocLink(
-									"features/mcp/using-mcp-in-kilo-code#editing-mcp-settings-files",
-									"mcp_edit_settings",
-								)}
-								style={{ display: "inline" }}>
-								{t("mcp:learnMoreEditingSettings")}
-							</VSCodeLink>
-						</div>
+						{shouldShowDocLinks() && (
+							<div
+								style={{
+									marginTop: "15px",
+									fontSize: "12px",
+									color: "var(--vscode-descriptionForeground)",
+								}}>
+								<VSCodeLink
+									href={buildDocLink(
+										"features/mcp/using-mcp-in-kilo-code#editing-mcp-settings-files",
+										"mcp_edit_settings",
+									)}
+									style={{ display: "inline" }}>
+									{t("mcp:learnMoreEditingSettings")}
+								</VSCodeLink>
+							</div>
+						)}
 					</>
 				)}
 			</Section>

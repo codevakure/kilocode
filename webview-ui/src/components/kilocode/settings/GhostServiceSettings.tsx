@@ -17,6 +17,7 @@ import { VSCodeCheckbox, VSCodeButton, VSCodeDropdown, VSCodeOption } from "@vsc
 import { useKeybindings } from "@/hooks/useKeybindings"
 import { useExtensionState } from "../../../context/ExtensionStateContext"
 import { PROVIDERS } from "../../settings/constants"
+import { buildDocLink, shouldShowDocLinks } from "@src/utils/docLinks"
 
 type GhostServiceSettingsViewProps = HTMLAttributes<HTMLDivElement> & {
 	ghostServiceSettings: GhostServiceSettings
@@ -276,13 +277,15 @@ export const GhostServiceSettingsView = ({
 											<li key={name}>{name}</li>
 										))}
 									</ul>
-									<div className="text-vscode-descriptionForeground">
-										<a
-											href="https://kilo.ai/docs/basic-usage/autocomplete"
-											className="text-vscode-textLink-foreground hover:underline">
-											{t("kilocode:ghost.settings.noModelConfigured.learnMore")}
-										</a>
-									</div>
+									{shouldShowDocLinks() && (
+										<div className="text-vscode-descriptionForeground">
+											<a
+												href={buildDocLink("basic-usage/autocomplete", "settings")}
+												className="text-vscode-textLink-foreground hover:underline">
+												{t("kilocode:ghost.settings.noModelConfigured.learnMore")}
+											</a>
+										</div>
+									)}
 								</div>
 							)}
 							{MODEL_SELECTION_ENABLED && (

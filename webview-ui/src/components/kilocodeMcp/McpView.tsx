@@ -11,7 +11,10 @@ import { MarketplaceViewStateManager } from "../../components/marketplace/Market
 import { MarketplaceView } from "../../components/marketplace/MarketplaceView"
 
 const McpView = () => {
-	const [activeTab, setActiveTab] = useState("marketplace")
+	// Check if marketplace is enabled via environment variable
+	const marketplaceEnabled = typeof window !== "undefined" && window.MCP_MARKETPLACE_ENABLED === true
+	// Default to "installed" tab when marketplace is disabled
+	const [activeTab, setActiveTab] = useState(marketplaceEnabled ? "marketplace" : "installed")
 	const marketplaceStateManager = useMemo(() => new MarketplaceViewStateManager(), [])
 	const { t } = useAppTranslation()
 
@@ -46,11 +49,13 @@ const McpView = () => {
 							padding: "0 20px 0 20px",
 							borderBottom: "1px solid var(--vscode-panel-border)",
 						}}>
-						<TabButton
-							isActive={activeTab === "marketplace"}
-							onClick={() => handleTabChange("marketplace")}>
-							Marketplace
-						</TabButton>
+						{marketplaceEnabled && (
+							<TabButton
+								isActive={activeTab === "marketplace"}
+								onClick={() => handleTabChange("marketplace")}>
+								Marketplace
+							</TabButton>
+						)}
 
 						<TabButton isActive={activeTab === "installed"} onClick={() => handleTabChange("installed")}>
 							Installed
@@ -59,7 +64,7 @@ const McpView = () => {
 
 					{/* Content container */}
 					<div style={{ width: "100%" }}>
-						{activeTab === "marketplace" && (
+						{marketplaceEnabled && activeTab === "marketplace" && (
 							<MarketplaceView hideHeader targetTab="mcp" stateManager={marketplaceStateManager} />
 						)}
 						{activeTab === "installed" && <RooMcpView hideHeader onDone={() => {}} />}

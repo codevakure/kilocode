@@ -99,6 +99,18 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(outputChannel)
 	outputChannel.appendLine(`${Package.name} extension activated - ${JSON.stringify(Package)}`)
 
+	// kilocode_change start - Set feature flag context variables for menu visibility
+	const mcpMarketplaceEnabled = process.env.MCP_MARKETPLACE_ENABLED === "true"
+	const providersEnabled = process.env.PROVIDERS_ENABLED === "true"
+	const agentManagerEnabled = process.env.AGENT_MANAGER_ENABLED === "true"
+	await vscode.commands.executeCommand("setContext", "kilocode.mcpMarketplaceEnabled", mcpMarketplaceEnabled)
+	await vscode.commands.executeCommand("setContext", "kilocode.providersEnabled", providersEnabled)
+	await vscode.commands.executeCommand("setContext", "kilocode.agentManagerEnabled", agentManagerEnabled)
+	outputChannel.appendLine(
+		`Feature flags: MCP_MARKETPLACE_ENABLED=${mcpMarketplaceEnabled}, PROVIDERS_ENABLED=${providersEnabled}, AGENT_MANAGER_ENABLED=${agentManagerEnabled}`,
+	)
+	// kilocode_change end
+
 	// Migrate old settings to new
 	await migrateSettings(context, outputChannel)
 

@@ -14,6 +14,7 @@ import { Package } from "@roo/package"
 import { vscode } from "@/utils/vscode"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui"
+import { shouldShowDocLinks } from "@/utils/docLinks"
 
 import { SectionHeader } from "./SectionHeader"
 import { Section } from "./Section"
@@ -53,36 +54,42 @@ export const About = ({ telemetrySetting, setTelemetrySetting, className, ...pro
 						}}>
 						{t("settings:footer.telemetry.label")}
 					</VSCodeCheckbox>
-					<p className="text-vscode-descriptionForeground text-sm mt-0">
+					{shouldShowDocLinks() && (
+						<p className="text-vscode-descriptionForeground text-sm mt-0">
+							<Trans
+								i18nKey="settings:footer.telemetry.description"
+								components={{
+									privacyLink: <VSCodeLink href="https://kilo.ai/privacy" />,
+								}}
+							/>
+						</p>
+					)}
+				</div>
+
+				{shouldShowDocLinks() && (
+					<div>
 						<Trans
-							i18nKey="settings:footer.telemetry.description"
+							i18nKey="settings:footer.feedback"
 							components={{
-								privacyLink: <VSCodeLink href="https://kilo.ai/privacy" />,
+								githubLink: <VSCodeLink href="https://github.com/Kilo-Org/kilocode" />,
+								redditLink: <VSCodeLink href="https://reddit.com/r/kilocode" />,
+								discordLink: <VSCodeLink href="https://kilo.ai/discord" />,
 							}}
 						/>
-					</p>
-				</div>
-
-				<div>
-					<Trans
-						i18nKey="settings:footer.feedback"
-						components={{
-							githubLink: <VSCodeLink href="https://github.com/Kilo-Org/kilocode" />,
-							redditLink: <VSCodeLink href="https://reddit.com/r/kilocode" />,
-							discordLink: <VSCodeLink href="https://kilo.ai/discord" />,
-						}}
-					/>
-				</div>
+					</div>
+				)}
 
 				{/* kilocode_change start */}
-				<div>
-					<Trans
-						i18nKey="settings:footer.support"
-						components={{
-							supportLink: <VSCodeLink href="https://kilo.ai/support" />,
-						}}
-					/>
-				</div>
+				{shouldShowDocLinks() && (
+					<div>
+						<Trans
+							i18nKey="settings:footer.support"
+							components={{
+								supportLink: <VSCodeLink href="https://kilo.ai/support" />,
+							}}
+						/>
+					</div>
+				)}
 				{/* kilocode_change end */}
 
 				<div className="flex flex-wrap items-center gap-2 mt-2">

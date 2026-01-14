@@ -138,13 +138,19 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 	const extensionState = useExtensionState()
 	const { currentApiConfigName, listApiConfigMeta, uriScheme, settingsImportedAt } = extensionState
 
+	// Check if providers are enabled via environment variable (used for default tab)
+	const providersEnabledInitial = typeof window !== "undefined" && window.PROVIDERS_ENABLED === true
+
 	const [isDiscardDialogShow, setDiscardDialogShow] = useState(false)
 	const [isChangeDetected, setChangeDetected] = useState(false)
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+	// Default to "modes" when providers are disabled, otherwise use "providers"
 	const [activeTab, setActiveTab] = useState<SectionName>(
 		targetSection && sectionNames.includes(targetSection as SectionName)
 			? (targetSection as SectionName)
-			: "providers",
+			: providersEnabledInitial
+				? "providers"
+				: "modes",
 	)
 
 	const [editingApiConfigName, setEditingApiConfigName] = useState<string>(currentApiConfigName || "default") // kilocode_change: Track which profile is being edited separately from the active profile
@@ -719,6 +725,9 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 	const [isCompactMode, setIsCompactMode] = useState(false)
 	const containerRef = useRef<HTMLDivElement>(null)
 
+	// Check if providers are enabled via environment variable
+	const providersEnabled = typeof window !== "undefined" && window.PROVIDERS_ENABLED === true
+
 	// Setup resize observer to detect when we should switch to compact mode
 	useEffect(() => {
 		if (!containerRef.current) return
@@ -739,7 +748,8 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 
 	const sections: { id: SectionName; icon: LucideIcon }[] = useMemo(
 		() => [
-			{ id: "providers", icon: Plug },
+			// Only show providers section if PROVIDERS_ENABLED is true
+			...(providersEnabled ? [{ id: "providers" as const, icon: Plug }] : []),
 			{ id: "modes", icon: Users2 },
 			{ id: "autoApprove", icon: CheckCheck },
 			// { id: "slashCommands", icon: SquareSlash }, // kilocode_change: needs work to be re-introduced
@@ -757,7 +767,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 			{ id: "mcp", icon: Server },
 			{ id: "about", icon: Info },
 		],
-		[], // kilocode_change
+		[providersEnabled], // kilocode_change
 	)
 	// Update target section logic to set active tab
 	useEffect(() => {

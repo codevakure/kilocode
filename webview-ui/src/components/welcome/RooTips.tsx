@@ -2,7 +2,7 @@ import { VSCodeLink } from "@vscode/webview-ui-toolkit/react"
 import { useTranslation } from "react-i18next"
 import { Trans } from "react-i18next"
 
-import { buildDocLink } from "@src/utils/docLinks"
+import { buildDocLink, shouldShowDocLinks } from "@src/utils/docLinks"
 import { ReplaceAll, Users } from "lucide-react"
 
 const tips = [
@@ -22,6 +22,10 @@ const tips = [
 
 const RooTips = () => {
 	const { t } = useTranslation("chat")
+
+	if (!shouldShowDocLinks()) {
+		return null
+	}
 
 	return (
 		<div className="flex flex-col gap-2 mb-4 max-w-[500px] text-vscode-descriptionForeground">

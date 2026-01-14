@@ -168,47 +168,51 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onDone }) => {
 								</div>
 
 								<div className="w-full flex gap-2 flex-col min-[225px]:flex-row">
-									<div className="w-full min-[225px]:w-1/2">
-										<VSCodeButtonLink
-											href={getAppUrl("/profile")}
-											appearance="primary"
-											className="w-full">
-											{t("kilocode:profile.dashboard")}
-										</VSCodeButtonLink>
-									</div>
+									{!isEnterprise && (
+										<div className="w-full min-[225px]:w-1/2">
+											<VSCodeButtonLink
+												href={getAppUrl("/profile")}
+												appearance="primary"
+												className="w-full">
+												{t("kilocode:profile.dashboard")}
+											</VSCodeButtonLink>
+										</div>
+									)}
 									<VSCodeButton
 										appearance="secondary"
 										onClick={handleLogout}
-										className="w-full min-[225px]:w-1/2">
+										className={`w-full ${!isEnterprise ? "min-[225px]:w-1/2" : ""}`}>
 										{t("kilocode:profile.logOut")}
 									</VSCodeButton>
 								</div>
 
-								<div className="w-full mt-2">
-									{organizationId ? (
-										<VSCodeButtonLink
-											href={getAppUrl(`/organizations/${organizationId}/usage-details`)}
-											appearance="secondary"
-											className="w-full">
-											{t("kilocode:profile.detailedUsage")}
-										</VSCodeButtonLink>
-									) : (
-										(profileData.organizations?.length ?? 0) === 0 && (
+								{!isEnterprise && (
+									<div className="w-full mt-2">
+										{organizationId ? (
 											<VSCodeButtonLink
-												onClick={() => {
-													telemetryClient.capture(
-														TelemetryEventName.CREATE_ORGANIZATION_LINK_CLICKED,
-														{ origin: "usage-details" },
-													)
-												}}
-												href={getAppUrl("/organizations/new")}
-												appearance="primary"
+												href={getAppUrl(`/organizations/${organizationId}/usage-details`)}
+												appearance="secondary"
 												className="w-full">
-												{t("kilocode:profile.createOrganization")}
+												{t("kilocode:profile.detailedUsage")}
 											</VSCodeButtonLink>
-										)
-									)}
-								</div>
+										) : (
+											(profileData.organizations?.length ?? 0) === 0 && (
+												<VSCodeButtonLink
+													onClick={() => {
+														telemetryClient.capture(
+															TelemetryEventName.CREATE_ORGANIZATION_LINK_CLICKED,
+															{ origin: "usage-details" },
+														)
+													}}
+													href={getAppUrl("/organizations/new")}
+													appearance="primary"
+													className="w-full">
+													{t("kilocode:profile.createOrganization")}
+												</VSCodeButtonLink>
+											)
+										)}
+									</div>
+								)}
 
 								<VSCodeDivider className="w-full my-6" />
 

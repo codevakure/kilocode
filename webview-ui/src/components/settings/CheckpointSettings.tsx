@@ -3,7 +3,7 @@ import { useAppTranslation } from "@/i18n/TranslationContext"
 import { VSCodeCheckbox, VSCodeLink, VSCodeTextField, VSCodeButton } from "@vscode/webview-ui-toolkit/react" // kilocode_change
 import { GitBranch, Trash2, Clock } from "lucide-react" // kilocode_change
 import { Trans } from "react-i18next"
-import { buildDocLink } from "@src/utils/docLinks"
+import { buildDocLink, shouldShowDocLinks } from "@src/utils/docLinks"
 import { Slider } from "@/components/ui"
 
 import { SetCachedStateField } from "./types"
@@ -73,13 +73,15 @@ export const CheckpointSettings = ({
 						<span className="font-medium">{t("settings:checkpoints.enable.label")}</span>
 					</VSCodeCheckbox>
 					<div className="text-vscode-descriptionForeground text-sm mt-1">
-						<Trans i18nKey="settings:checkpoints.enable.description">
-							<VSCodeLink
-								href={buildDocLink("features/checkpoints", "settings_checkpoints")}
-								style={{ display: "inline" }}>
-								{" "}
-							</VSCodeLink>
-						</Trans>
+						{shouldShowDocLinks() && (
+							<Trans i18nKey="settings:checkpoints.enable.description">
+								<VSCodeLink
+									href={buildDocLink("features/checkpoints", "settings_checkpoints")}
+									style={{ display: "inline" }}>
+									{" "}
+								</VSCodeLink>
+							</Trans>
+						)}
 					</div>
 				</div>
 

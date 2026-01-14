@@ -362,7 +362,7 @@
 				{
 					"command": "kilo-code.agentManagerOpen",
 					"group": "navigation@1",
-					"when": "view == kilo-code.SidebarProvider"
+					"when": "view == kilo-code.SidebarProvider && kilocode.agentManagerEnabled"
 				},
 				{
 					"command": "kilo-code.mcpButtonClicked",
@@ -372,7 +372,7 @@
 				{
 					"command": "kilo-code.marketplaceButtonClicked",
 					"group": "navigation@3",
-					"when": "view == kilo-code.SidebarProvider"
+					"when": "view == kilo-code.SidebarProvider && kilocode.mcpMarketplaceEnabled"
 				},
 				{
 					"command": "kilo-code.historyButtonClicked",

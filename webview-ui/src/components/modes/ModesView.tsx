@@ -26,7 +26,7 @@ import {
 import { TOOL_GROUPS } from "@roo/tools"
 
 import { vscode } from "@src/utils/vscode"
-import { buildDocLink } from "@src/utils/docLinks"
+import { buildDocLink, shouldShowDocLinks } from "@src/utils/docLinks"
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { useExtensionState } from "@src/context/ExtensionStateContext"
 import { Section } from "@src/components/settings/Section"
@@ -668,23 +668,25 @@ const ModesView = () => {
 									</div>
 								)}
 							</div>
-							<StandardTooltip content={t("chat:modeSelector.marketplace")}>
-								<Button
-									variant="ghost"
-									size="icon"
-									onClick={() => {
-										window.postMessage(
-											{
-												type: "action",
-												action: "marketplaceButtonClicked",
-												values: { marketplaceTab: "mode" },
-											},
-											"*",
-										)
-									}}>
-									<span className="codicon codicon-extensions"></span>
-								</Button>
-							</StandardTooltip>
+							{typeof window !== "undefined" && window.MCP_MARKETPLACE_ENABLED === true && (
+								<StandardTooltip content={t("chat:modeSelector.marketplace")}>
+									<Button
+										variant="ghost"
+										size="icon"
+										onClick={() => {
+											window.postMessage(
+												{
+													type: "action",
+													action: "marketplaceButtonClicked",
+													values: { marketplaceTab: "mode" },
+												},
+												"*",
+											)
+										}}>
+										<span className="codicon codicon-extensions"></span>
+									</Button>
+								</StandardTooltip>
+							)}
 
 							<StandardTooltip content={t("prompts:modes.importMode")}>
 								<Button
@@ -704,16 +706,18 @@ const ModesView = () => {
 						{/* kilocode_change - add KiloShareModesBanner */}
 						<KiloShareModesBanner />
 
-						<Trans i18nKey="prompts:modes.createModeHelpText">
-							<VSCodeLink
-								href={buildDocLink("basic-usage/using-modes", "prompts_view_modes")}
-								style={{ display: "inline" }}
-								aria-label="Learn about using modes"></VSCodeLink>
-							<VSCodeLink
-								href={buildDocLink("features/custom-modes", "prompts_view_modes")}
-								style={{ display: "inline" }}
-								aria-label="Learn about customizing modes"></VSCodeLink>
-						</Trans>
+						{shouldShowDocLinks() && (
+							<Trans i18nKey="prompts:modes.createModeHelpText">
+								<VSCodeLink
+									href={buildDocLink("basic-usage/using-modes", "prompts_view_modes")}
+									style={{ display: "inline" }}
+									aria-label="Learn about using modes"></VSCodeLink>
+								<VSCodeLink
+									href={buildDocLink("features/custom-modes", "prompts_view_modes")}
+									style={{ display: "inline" }}
+									aria-label="Learn about customizing modes"></VSCodeLink>
+							</Trans>
+						)}
 					</div>
 
 					<div className="flex items-center gap-1 mb-3">
@@ -1299,7 +1303,7 @@ const ModesView = () => {
 										}}
 									/>
 								),
-								"0": (
+								"0": shouldShowDocLinks() ? (
 									<VSCodeLink
 										href={buildDocLink(
 											"features/custom-instructions#global-rules-directory",
@@ -1308,6 +1312,8 @@ const ModesView = () => {
 										style={{ display: "inline" }}
 										aria-label="Learn about global custom instructions for modes"
 									/>
+								) : (
+									<></>
 								),
 							}}
 						/>
@@ -1392,7 +1398,7 @@ const ModesView = () => {
 														}}
 													/>
 												),
-												"1": (
+												"1": shouldShowDocLinks() ? (
 													<VSCodeLink
 														href={buildDocLink(
 															"features/footgun-prompting",
@@ -1400,6 +1406,8 @@ const ModesView = () => {
 														)}
 														style={{ display: "inline" }}
 														aria-label="Read important information about overriding system prompts"></VSCodeLink>
+												) : (
+													<></>
 												),
 												"2": <strong />,
 											}}
@@ -1414,17 +1422,19 @@ const ModesView = () => {
 				<div className="pb-5">
 					<h3 className="text-vscode-foreground mb-3">{t("prompts:globalCustomInstructions.title")}</h3>
 
-					<div className="text-sm text-vscode-descriptionForeground mb-2">
-						<Trans i18nKey="prompts:globalCustomInstructions.description">
-							<VSCodeLink
-								href={buildDocLink(
-									"features/custom-instructions#setting-up-global-rules",
-									"prompts_global_custom_instructions",
-								)}
-								style={{ display: "inline" }}
-								aria-label="Learn more about global custom instructions"></VSCodeLink>
-						</Trans>
-					</div>
+					{shouldShowDocLinks() && (
+						<div className="text-sm text-vscode-descriptionForeground mb-2">
+							<Trans i18nKey="prompts:globalCustomInstructions.description">
+								<VSCodeLink
+									href={buildDocLink(
+										"features/custom-instructions#setting-up-global-rules",
+										"prompts_global_custom_instructions",
+									)}
+									style={{ display: "inline" }}
+									aria-label="Learn more about global custom instructions"></VSCodeLink>
+							</Trans>
+						</div>
+					)}
 					<VSCodeTextArea
 						resize="vertical"
 						value={customInstructions || ""}
@@ -1461,7 +1471,7 @@ const ModesView = () => {
 										}
 									/>
 								),
-								"0": (
+								"0": shouldShowDocLinks() ? (
 									<VSCodeLink
 										href={buildDocLink(
 											"features/custom-instructions#setting-up-global-rules",
@@ -1470,6 +1480,8 @@ const ModesView = () => {
 										style={{ display: "inline" }}
 										aria-label="Learn about setting up global custom instructions"
 									/>
+								) : (
+									<></>
 								),
 							}}
 						/>

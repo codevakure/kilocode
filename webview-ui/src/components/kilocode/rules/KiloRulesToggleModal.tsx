@@ -7,6 +7,7 @@ import styled from "styled-components"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/tooltip"
 import { vscode } from "@/utils/vscode"
 import BottomButton from "../BottomButton"
+import { shouldShowDocLinks } from "@src/utils/docLinks" // kilocode_change
 
 import RulesWorkflowsSection from "./RulesWorkflowsSection"
 
@@ -21,14 +22,21 @@ interface DescriptionWithLinkProps {
 	linkText: string
 }
 
+// kilocode_change start - wrap doc link with shouldShowDocLinks check
 const DescriptionWithLink: React.FC<DescriptionWithLinkProps> = ({ children, href, linkText }) => (
 	<p>
-		{children}{" "}
-		<VSCodeLink href={href} style={{ display: "inline" }} className="text-xs">
-			{linkText}
-		</VSCodeLink>
+		{children}
+		{shouldShowDocLinks() && (
+			<>
+				{" "}
+				<VSCodeLink href={href} style={{ display: "inline" }} className="text-xs">
+					{linkText}
+				</VSCodeLink>
+			</>
+		)}
 	</p>
 )
+// kilocode_change end
 
 const KiloRulesToggleModal: React.FC = () => {
 	const { t } = useTranslation()

@@ -54,7 +54,7 @@ import { CheckpointWarning } from "./CheckpointWarning"
 import { IdeaSuggestionsBox } from "../kilocode/chat/IdeaSuggestionsBox" // kilocode_change
 import { KilocodeNotifications } from "../kilocode/KilocodeNotifications" // kilocode_change
 import { QueuedMessages } from "./QueuedMessages"
-import { buildDocLink } from "@/utils/docLinks"
+import { buildDocLink, shouldShowDocLinks } from "@/utils/docLinks"
 // import DismissibleUpsell from "../common/DismissibleUpsell" // kilocode_change: unused
 // import { useCloudUpsell } from "@src/hooks/useCloudUpsell" // kilocode_change: unused
 // import { Cloud } from "lucide-react" // kilocode_change: unused
@@ -1599,21 +1599,23 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 						)}
 						<div className="flex flex-grow flex-col justify-center gap-4">
 							{/* kilocode_change end */}
-							<p className="text-vscode-editor-foreground leading-normal font-vscode-font-family text-center text-balance max-w-[380px] mx-auto my-0">
-								<Trans
-									i18nKey="chat:about"
-									components={{
-										DocsLink: (
-											<a
-												href={buildDocLink("", "welcome")}
-												target="_blank"
-												rel="noopener noreferrer">
-												the docs
-											</a>
-										),
-									}}
-								/>
-							</p>
+							{shouldShowDocLinks() && (
+								<p className="text-vscode-editor-foreground leading-normal font-vscode-font-family text-center text-balance max-w-[380px] mx-auto my-0">
+									<Trans
+										i18nKey="chat:about"
+										components={{
+											DocsLink: (
+												<a
+													href={buildDocLink("", "welcome")}
+													target="_blank"
+													rel="noopener noreferrer">
+													the docs
+												</a>
+											),
+										}}
+									/>
+								</p>
+							)}
 							{taskHistoryFullLength === 0 && <IdeaSuggestionsBox />} {/* kilocode_change */}
 							{/*<div className="mb-2.5">
 								{cloudIsAuthenticated || taskHistory.length < 4 ? <RooTips /> : <RooCloudCTA />}

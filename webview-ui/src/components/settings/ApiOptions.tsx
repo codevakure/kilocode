@@ -138,7 +138,7 @@ import { ConsecutiveMistakeLimitControl } from "./ConsecutiveMistakeLimitControl
 import { BedrockCustomArn } from "./providers/BedrockCustomArn"
 import { KiloCode } from "../kilocode/settings/providers/KiloCode" // kilocode_change
 import { RooBalanceDisplay } from "./providers/RooBalanceDisplay"
-import { buildDocLink } from "@src/utils/docLinks"
+import { buildDocLink, shouldShowDocLinks } from "@src/utils/docLinks"
 import { KiloProviderRouting, KiloProviderRoutingManagedByOrganization } from "./providers/KiloProviderRouting"
 import { RateLimitAfterControl } from "./RateLimitAfterSettings" // kilocode_change
 import { BookOpenText } from "lucide-react"
@@ -538,6 +538,7 @@ const ApiOptions = ({
 					{selectedProvider === "roo" && cloudIsAuthenticated ? (
 						<RooBalanceDisplay />
 					) : (
+						shouldShowDocLinks() &&
 						docs && (
 							<VSCodeLink href={docs.url} target="_blank" className="flex gap-2">
 								{docs.name}

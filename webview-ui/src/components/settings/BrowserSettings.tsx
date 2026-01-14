@@ -15,7 +15,7 @@ import {
 } from "@/components/ui"
 import { useAppTranslation } from "@/i18n/TranslationContext"
 import { vscode } from "@/utils/vscode"
-import { buildDocLink } from "@src/utils/docLinks"
+import { buildDocLink, shouldShowDocLinks } from "@src/utils/docLinks"
 
 import { Section } from "./Section"
 import { SectionHeader } from "./SectionHeader"
@@ -123,13 +123,15 @@ export const BrowserSettings = ({
 						<span className="font-medium">{t("settings:browser.enable.label")}</span>
 					</VSCodeCheckbox>
 					<div className="text-vscode-descriptionForeground text-sm mt-1">
-						<Trans i18nKey="settings:browser.enable.description">
-							<VSCodeLink
-								href={buildDocLink("features/browser-use", "settings_browser_tool")}
-								style={{ display: "inline" }}>
-								{" "}
-							</VSCodeLink>
-						</Trans>
+						{shouldShowDocLinks() && (
+							<Trans i18nKey="settings:browser.enable.description">
+								<VSCodeLink
+									href={buildDocLink("features/browser-use", "settings_browser_tool")}
+									style={{ display: "inline" }}>
+									{" "}
+								</VSCodeLink>
+							</Trans>
+						)}
 					</div>
 				</div>
 

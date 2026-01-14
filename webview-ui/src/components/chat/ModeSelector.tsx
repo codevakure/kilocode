@@ -287,21 +287,23 @@ export const ModeSelector = ({
 					{/* Bottom bar with buttons on left and title on right */}
 					<div className="flex flex-row items-center justify-between px-2 py-2 border-t border-vscode-dropdown-border">
 						<div className="flex flex-row gap-1">
-							<IconButton
-								iconClass="codicon-extensions"
-								title={t("chat:modeSelector.marketplace")}
-								onClick={() => {
-									window.postMessage(
-										{
-											type: "action",
-											action: "marketplaceButtonClicked",
-											values: { marketplaceTab: "mode" },
-										},
-										"*",
-									)
-									setOpen(false)
-								}}
-							/>
+							{typeof window !== "undefined" && window.MCP_MARKETPLACE_ENABLED === true && (
+								<IconButton
+									iconClass="codicon-extensions"
+									title={t("chat:modeSelector.marketplace")}
+									onClick={() => {
+										window.postMessage(
+											{
+												type: "action",
+												action: "marketplaceButtonClicked",
+												values: { marketplaceTab: "mode" },
+											},
+											"*",
+										)
+										setOpen(false)
+									}}
+								/>
+							)}
 							<IconButton
 								iconClass="codicon-settings-gear"
 								title={t("chat:modeSelector.settings")}

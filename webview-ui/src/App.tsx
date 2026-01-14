@@ -176,6 +176,15 @@ const App = () => {
 				// Handle switchTab action with tab parameter
 				if (message.action === "switchTab" && message.tab) {
 					const targetTab = message.tab as Tab
+					// kilocode_change start - Block marketplace tab if disabled
+					if (
+						targetTab === "marketplace" &&
+						typeof window !== "undefined" &&
+						window.MCP_MARKETPLACE_ENABLED !== true
+					) {
+						return // Don't switch to marketplace tab when disabled
+					}
+					// kilocode_change end
 					// kilocode_change start - Handle auth tab with returnTo and profileName parameters
 					if (targetTab === "auth") {
 						if (message.values?.returnTo) {
@@ -203,6 +212,16 @@ const App = () => {
 					// kilocode_change end
 					const marketplaceTab = message.values?.marketplaceTab as string | undefined
 					const editingProfile = message.values?.editingProfile as string | undefined // kilocode_change
+
+					// kilocode_change start - Block marketplace tab if disabled
+					if (
+						newTab === "marketplace" &&
+						typeof window !== "undefined" &&
+						window.MCP_MARKETPLACE_ENABLED !== true
+					) {
+						return // Don't switch to marketplace tab when disabled
+					}
+					// kilocode_change end
 
 					if (newTab) {
 						switchTab(newTab)

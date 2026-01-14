@@ -24,6 +24,9 @@ const KiloCodeAuth: React.FC<KiloCodeAuthProps> = ({ onManualConfigClick, onLogi
 	const [deviceAuthError, setDeviceAuthError] = useState<string>()
 	const [deviceAuthUserEmail, setDeviceAuthUserEmail] = useState<string>()
 
+	// Check if providers are enabled via environment variable
+	const providersEnabled = typeof window !== "undefined" && window.PROVIDERS_ENABLED === true
+
 	// Listen for device auth messages from extension
 	useEffect(() => {
 		const handleMessage = (event: MessageEvent) => {
@@ -138,7 +141,7 @@ const KiloCodeAuth: React.FC<KiloCodeAuthProps> = ({ onManualConfigClick, onLogi
 			<div className="w-full flex flex-col gap-5">
 				<ButtonPrimary onClick={handleStartDeviceAuth}>{t("kilocode:welcome.ctaButton")}</ButtonPrimary>
 
-				{!!onManualConfigClick && (
+				{providersEnabled && !!onManualConfigClick && (
 					<ButtonSecondary onClick={() => onManualConfigClick && onManualConfigClick()}>
 						{t("kilocode:welcome.manualModeButton")}
 					</ButtonSecondary>
