@@ -65,33 +65,29 @@ export const fastApplyApiProviderSchema = z.enum(["current", "morph", "kilocode"
 
 export type FastApplyApiProvider = z.infer<typeof fastApplyApiProviderSchema>
 
-export const DEFAULT_KILOCODE_BACKEND_URL = "https://kilo.ai"
+// Ranger enterprise backend URL - all API calls go to this backend
+// Original KiloCode default was "https://kilo.ai"
+export const DEFAULT_KILOCODE_BACKEND_URL = "http://localhost:3080"
 
 export function getKiloBaseUriFromToken(kilocodeToken?: string) {
+	// For Ranger enterprise, always use the configured backend URL
+	// This ignores the token's env claim since we're using our own backend
+	const baseUrl = getGlobalKilocodeBackendUrl()
+
+	// If a token is provided, we could add token validation here in the future
+	// For now, just return the configured backend URL
 	if (kilocodeToken) {
 		try {
 			const payload_string = kilocodeToken.split(".")[1]
-			if (!payload_string) return "https://api.kilo.ai"
-
-			const payload_json =
-				typeof atob !== "undefined" ? atob(payload_string) : Buffer.from(payload_string, "base64").toString()
-			const payload = JSON.parse(payload_json)
-			//note: this is UNTRUSTED, so we need to make sure we're OK with this being manipulated by an attacker; e.g. we should not read uri's from the JWT directly.
-			// For dev tokens, check if KILOCODE_BACKEND_BASE_URL is set to a custom value
-			if (payload.env === "development") {
-				const baseUrl = getGlobalKilocodeBackendUrl()
-				// This allows pointing to custom dev backends beyond just those accessible on localhost
-				// (e.g., 192.168.x.x, staging servers)
-				if (baseUrl !== DEFAULT_KILOCODE_BACKEND_URL) {
-					return baseUrl
-				}
-				return "http://localhost:3000"
+			if (payload_string) {
+				// Token exists and has a payload - use configured backend
+				return baseUrl
 			}
 		} catch (_error) {
-			console.warn("Failed to get base URL from Kilo Code token")
+			console.warn("Failed to parse Kilo Code token")
 		}
 	}
-	return "https://api.kilo.ai"
+	return baseUrl
 }
 
 /**
@@ -133,36 +129,24 @@ export function getAppUrl(path: string = ""): string {
 /**
  * Gets the API URL for the current environment.
  * Respects KILOCODE_BACKEND_BASE_URL environment variable for local development.
- * In development: http://localhost:3000
- * In production: https://api.kilo.ai
+ * For Ranger enterprise: Uses configured backend URL directly
  */
 export function getApiUrl(path: string = ""): string {
 	const backend = getGlobalKilocodeBackendUrl()
-
-	// If using a custom backend (not the default production URL), use it directly
-	if (backend !== DEFAULT_KILOCODE_BACKEND_URL) {
-		return new URL(path, backend).toString()
-	}
-
-	// In production, use the api subdomain
-	return new URL(path, "https://api.kilo.ai").toString()
+	// For Ranger enterprise, always use the configured backend directly
+	// No need for api subdomain separation
+	return new URL(path, backend).toString()
 }
 
 /**
- * Gets the extension config URL, which uses a legacy subdomain structure.
- * In development: http://localhost:3000/extension-config.json
- * In production: https://api.kilo.ai/extension-config.json
+ * Gets the extension config URL.
+ * For Ranger enterprise: Uses configured backend URL directly
  */
 export function getExtensionConfigUrl(): string {
 	try {
-		const backend = getGlobalKilocodeBackendUrl()
-		if (backend !== DEFAULT_KILOCODE_BACKEND_URL) {
-			return getAppUrl("/extension-config.json")
-		} else {
-			return "https://api.kilo.ai/extension-config.json"
-		}
+		return getAppUrl("/extension-config.json")
 	} catch (error) {
 		console.warn("Failed to build extension config URL:", error)
-		return "https://api.kilo.ai/extension-config.json"
+		return getAppUrl("/extension-config.json")
 	}
 }

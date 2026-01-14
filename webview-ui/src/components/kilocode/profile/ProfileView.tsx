@@ -29,6 +29,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onDone }) => {
 	const [balance, setBalance] = React.useState<number | null>(null)
 	const [isLoadingBalance, setIsLoadingBalance] = React.useState(true)
 	const [isLoadingUser, setIsLoadingUser] = React.useState(true)
+	// Track if this is an enterprise deployment (self-hosted Ranger, etc.)
+	const [isEnterprise, setIsEnterprise] = React.useState(false)
 	const organizationId = apiConfiguration?.kilocodeOrganizationId
 
 	useEffect(() => {
@@ -52,6 +54,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onDone }) => {
 				const payload = message.payload as BalanceDataResponsePayload
 				if (payload.success) {
 					setBalance(payload.data?.balance || 0)
+					// Check if this is an enterprise deployment (Ranger)
+					if (payload.data?.enterprise || payload.data?.unlimited) {
+						setIsEnterprise(true)
+					}
 				} else {
 					console.error("Error fetching balance data:", payload.error)
 					setBalance(null)
@@ -206,88 +212,91 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onDone }) => {
 
 								<VSCodeDivider className="w-full my-6" />
 
-								<div className="w-full flex flex-col items-center">
-									<div className="text-sm text-[var(--vscode-descriptionForeground)] mb-3">
-										{t("kilocode:profile.currentBalance")}
-									</div>
+								{/* Balance and Credits Section - Hidden for enterprise deployments */}
+								{!isEnterprise && (
+									<div className="w-full flex flex-col items-center">
+										<div className="text-sm text-[var(--vscode-descriptionForeground)] mb-3">
+											{t("kilocode:profile.currentBalance")}
+										</div>
 
-									<div className="text-4xl font-bold text-[var(--vscode-foreground)] mb-6 flex items-center gap-2">
-										{isLoadingBalance ? (
-											<div className="text-[var(--vscode-descriptionForeground)]">
-												{t("kilocode:profile.loading")}
+										<div className="text-4xl font-bold text-[var(--vscode-foreground)] mb-6 flex items-center gap-2">
+											{isLoadingBalance ? (
+												<div className="text-[var(--vscode-descriptionForeground)]">
+													{t("kilocode:profile.loading")}
+												</div>
+											) : (
+												balance && (
+													<>
+														<span>$</span>
+														<CountUp end={balance} duration={0.66} decimals={2} />
+														<VSCodeButton
+															appearance="icon"
+															className="mt-1"
+															onClick={() => {
+																setIsLoadingBalance(true)
+																vscode.postMessage({ type: "fetchBalanceDataRequest" })
+															}}>
+															<span className="codicon codicon-refresh"></span>
+														</VSCodeButton>
+													</>
+												)
+											)}
+										</div>
+
+										{/* Buy Credits Section - Only show for personal accounts */}
+										{!organizationId && (
+											<div className="w-full mt-8">
+												<div className="text-lg font-semibold text-[var(--vscode-foreground)] mb-4 text-center">
+													{t("kilocode:profile.shop.title")}
+												</div>
+
+												<div className="grid grid-cols-1 min-[300px]:grid-cols-2 gap-3 mb-6">
+													{creditPackages.map((pkg) => (
+														<div
+															key={pkg.credits}
+															className={`relative border rounded-lg p-4 bg-[var(--vscode-editor-background)] transition-all hover:shadow-md ${
+																pkg.popular
+																	? "border-[var(--vscode-button-background)] ring-1 ring-[var(--vscode-button-background)]"
+																	: "border-[var(--vscode-input-border)]"
+															}`}>
+															{pkg.popular && (
+																<div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
+																	<span className="bg-[var(--vscode-button-background)] text-[var(--vscode-button-foreground)] text-xs px-2 py-1 rounded-full font-medium">
+																		{t("kilocode:profile.shop.popular")}
+																	</span>
+																</div>
+															)}
+
+															<div className="text-center">
+																<div className="text-2xl font-bold text-[var(--vscode-foreground)] mb-1">
+																	${pkg.credits}
+																</div>
+																<div className="text-sm text-[var(--vscode-descriptionForeground)] mb-2">
+																	{t("kilocode:profile.shop.credits")}
+																</div>
+																<VSCodeButton
+																	appearance={pkg.popular ? "primary" : "secondary"}
+																	className="w-full"
+																	onClick={handleBuyCredits(pkg.credits)}>
+																	{t("kilocode:profile.shop.action")}
+																</VSCodeButton>
+															</div>
+														</div>
+													))}
+												</div>
+
+												<div className="text-center">
+													<VSCodeButtonLink
+														href={getAppUrl("/profile")}
+														appearance="secondary"
+														className="text-sm">
+														{t("kilocode:profile.shop.viewAll")}
+													</VSCodeButtonLink>
+												</div>
 											</div>
-										) : (
-											balance && (
-												<>
-													<span>$</span>
-													<CountUp end={balance} duration={0.66} decimals={2} />
-													<VSCodeButton
-														appearance="icon"
-														className="mt-1"
-														onClick={() => {
-															setIsLoadingBalance(true)
-															vscode.postMessage({ type: "fetchBalanceDataRequest" })
-														}}>
-														<span className="codicon codicon-refresh"></span>
-													</VSCodeButton>
-												</>
-											)
 										)}
 									</div>
-
-									{/* Buy Credits Section - Only show for personal accounts */}
-									{!organizationId && (
-										<div className="w-full mt-8">
-											<div className="text-lg font-semibold text-[var(--vscode-foreground)] mb-4 text-center">
-												{t("kilocode:profile.shop.title")}
-											</div>
-
-											<div className="grid grid-cols-1 min-[300px]:grid-cols-2 gap-3 mb-6">
-												{creditPackages.map((pkg) => (
-													<div
-														key={pkg.credits}
-														className={`relative border rounded-lg p-4 bg-[var(--vscode-editor-background)] transition-all hover:shadow-md ${
-															pkg.popular
-																? "border-[var(--vscode-button-background)] ring-1 ring-[var(--vscode-button-background)]"
-																: "border-[var(--vscode-input-border)]"
-														}`}>
-														{pkg.popular && (
-															<div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-																<span className="bg-[var(--vscode-button-background)] text-[var(--vscode-button-foreground)] text-xs px-2 py-1 rounded-full font-medium">
-																	{t("kilocode:profile.shop.popular")}
-																</span>
-															</div>
-														)}
-
-														<div className="text-center">
-															<div className="text-2xl font-bold text-[var(--vscode-foreground)] mb-1">
-																${pkg.credits}
-															</div>
-															<div className="text-sm text-[var(--vscode-descriptionForeground)] mb-2">
-																{t("kilocode:profile.shop.credits")}
-															</div>
-															<VSCodeButton
-																appearance={pkg.popular ? "primary" : "secondary"}
-																className="w-full"
-																onClick={handleBuyCredits(pkg.credits)}>
-																{t("kilocode:profile.shop.action")}
-															</VSCodeButton>
-														</div>
-													</div>
-												))}
-											</div>
-
-											<div className="text-center">
-												<VSCodeButtonLink
-													href={getAppUrl("/profile")}
-													appearance="secondary"
-													className="text-sm">
-													{t("kilocode:profile.shop.viewAll")}
-												</VSCodeButtonLink>
-											</div>
-										</div>
-									)}
-								</div>
+								)}
 							</div>
 						) : (
 							<div className="flex flex-col items-center pr-3">
