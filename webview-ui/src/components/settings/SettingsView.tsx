@@ -187,7 +187,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 		alwaysAllowWrite,
 		alwaysAllowWriteOutsideWorkspace,
 		alwaysAllowWriteProtected,
-		alwaysApproveResubmit,
 		autoCondenseContext,
 		autoCondenseContextPercent,
 		browserToolEnabled,
@@ -203,7 +202,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 		maxOpenTabsContext,
 		maxWorkspaceFiles,
 		mcpEnabled,
-		requestDelaySeconds,
 		remoteBrowserHost,
 		screenshotQuality,
 		soundEnabled,
@@ -223,6 +221,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 		terminalZdotdir,
 		writeDelayMs,
 		showRooIgnoredFiles,
+		enableSubfolderRules,
 		remoteBrowserEnabled,
 		maxReadFileLine,
 		showAutoApproveMenu, // kilocode_change
@@ -244,7 +243,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 		profileThresholds,
 		systemNotificationsEnabled, // kilocode_change
 		alwaysAllowFollowupQuestions,
-		alwaysAllowUpdateTodoList,
 		followupAutoApproveTimeoutMs,
 		ghostServiceSettings, // kilocode_change
 		// kilocode_change start - Auto-purge settings
@@ -254,6 +252,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 		autoPurgeCompletedTaskRetentionDays,
 		autoPurgeIncompleteTaskRetentionDays,
 		autoPurgeLastRunTimestamp,
+		kiloCodeWrapperProperties,
 		// kilocode_change end - Auto-purge settings
 		includeDiagnosticMessages,
 		maxDiagnosticMessages,
@@ -564,12 +563,11 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 					terminalZdotdir,
 					terminalCompressProgressBar,
 					mcpEnabled,
-					alwaysApproveResubmit: alwaysApproveResubmit ?? false,
-					requestDelaySeconds: requestDelaySeconds ?? 5,
 					maxOpenTabsContext: Math.min(Math.max(0, maxOpenTabsContext ?? 20), 500),
 					maxWorkspaceFiles: Math.min(Math.max(0, maxWorkspaceFiles ?? 200), 500),
 					showRooIgnoredFiles: showRooIgnoredFiles ?? true,
-					maxReadFileLine: maxReadFileLine ?? -1,
+					enableSubfolderRules: enableSubfolderRules ?? false,
+					maxReadFileLine: maxReadFileLine ?? 500 /*kilocode_change*/,
 					maxImageFileSize: maxImageFileSize ?? 5,
 					maxTotalImageSize: maxTotalImageSize ?? 20,
 					maxConcurrentFileReads: cachedState.maxConcurrentFileReads ?? 5,
@@ -577,7 +575,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 						includeDiagnosticMessages !== undefined ? includeDiagnosticMessages : true,
 					maxDiagnosticMessages: maxDiagnosticMessages ?? 50,
 					alwaysAllowSubtasks,
-					alwaysAllowUpdateTodoList,
 					alwaysAllowFollowupQuestions: alwaysAllowFollowupQuestions ?? false,
 					followupAutoApproveTimeoutMs,
 					condensingApiConfigId: condensingApiConfigId || "",
@@ -1038,14 +1035,11 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 							alwaysAllowWriteOutsideWorkspace={alwaysAllowWriteOutsideWorkspace}
 							alwaysAllowWriteProtected={alwaysAllowWriteProtected}
 							alwaysAllowBrowser={alwaysAllowBrowser}
-							alwaysApproveResubmit={alwaysApproveResubmit}
-							requestDelaySeconds={requestDelaySeconds}
 							alwaysAllowMcp={alwaysAllowMcp}
 							alwaysAllowModeSwitch={alwaysAllowModeSwitch}
 							alwaysAllowSubtasks={alwaysAllowSubtasks}
 							alwaysAllowExecute={alwaysAllowExecute}
 							alwaysAllowFollowupQuestions={alwaysAllowFollowupQuestions}
-							alwaysAllowUpdateTodoList={alwaysAllowUpdateTodoList}
 							followupAutoApproveTimeoutMs={followupAutoApproveTimeoutMs}
 							allowedCommands={allowedCommands}
 							allowedMaxRequests={allowedMaxRequests ?? undefined}
@@ -1131,6 +1125,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 							maxOpenTabsContext={maxOpenTabsContext}
 							maxWorkspaceFiles={maxWorkspaceFiles ?? 200}
 							showRooIgnoredFiles={showRooIgnoredFiles}
+							enableSubfolderRules={enableSubfolderRules}
 							maxReadFileLine={maxReadFileLine}
 							maxImageFileSize={maxImageFileSize}
 							maxTotalImageSize={maxTotalImageSize}
@@ -1227,7 +1222,11 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 
 					{/* About Section */}
 					{activeTab === "about" && (
-						<About telemetrySetting={telemetrySetting} setTelemetrySetting={setTelemetrySetting} />
+						<About
+							telemetrySetting={telemetrySetting}
+							setTelemetrySetting={setTelemetrySetting}
+							isVsCode={kiloCodeWrapperProperties?.kiloCodeWrapped !== true /*kilocode_change*/}
+						/>
 					)}
 				</TabContent>
 			</div>

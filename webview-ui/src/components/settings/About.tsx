@@ -23,9 +23,16 @@ import { getMemoryPercentage } from "@/kilocode/helpers"
 type AboutProps = HTMLAttributes<HTMLDivElement> & {
 	telemetrySetting: TelemetrySetting
 	setTelemetrySetting: (setting: TelemetrySetting) => void
+	isVsCode: boolean // kilocode_change
 }
 
-export const About = ({ telemetrySetting, setTelemetrySetting, className, ...props }: AboutProps) => {
+export const About = ({
+	telemetrySetting,
+	setTelemetrySetting,
+	className,
+	isVsCode, // kilocode_change
+	...props
+}: AboutProps) => {
 	const { t } = useAppTranslation()
 
 	const [kiloCodeBloat, setKiloCodeBloat] = useState<number[][]>([])
@@ -45,7 +52,7 @@ export const About = ({ telemetrySetting, setTelemetrySetting, className, ...pro
 			</SectionHeader>
 
 			<Section>
-				<div>
+				<div style={{ display: isVsCode ? "none" : undefined }}>
 					<VSCodeCheckbox
 						checked={telemetrySetting !== "disabled"}
 						onChange={(e: any) => {

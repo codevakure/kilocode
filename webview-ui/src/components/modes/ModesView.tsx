@@ -1294,7 +1294,7 @@ const ModesView = () => {
 											// Open or create an empty file
 											vscode.postMessage({
 												type: "openFile",
-												text: `./.roo/rules-${currentMode.slug}/rules.md`,
+												text: `./.kilocode/rules-${currentMode.slug}/rules.md`, // kilocode_change
 												values: {
 													create: true,
 													content: "",
