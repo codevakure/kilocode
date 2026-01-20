@@ -110,7 +110,10 @@
 			"label": "watch:cli:setup",
 			"dependsOn": ["watch:pnpm"],
 			"type": "shell",
-			"command": "node -e \"require('fs').existsSync('cli/dist/node_modules') || process.exit(1)\" || pnpm --filter @kilocode/cli dev:setup",
+			"command": "node -e \"if (!require('fs').existsSync('cli/dist/node_modules')) process.exit(1)\" || pnpm --filter @kilocode/cli dev:setup",
+			"windows": {
+				"command": "if (!(Test-Path cli/dist/node_modules)) { pnpm --filter @kilocode/cli dev:setup }"
+			},
 			"group": "build",
 			"presentation": {
 				"group": "watch:cli",

@@ -10,10 +10,10 @@ import { getDefaultModelId, getModelDimension, getModelScoreThreshold } from "..
  * Handles loading, validating, and providing access to configuration values.
  */
 export class CodeIndexConfigManager {
-	private codebaseIndexEnabled: boolean = false
-	private embedderProvider: EmbedderProvider = "openai"
+	private codebaseIndexEnabled: boolean = true // Default enabled with local embeddings
+	private embedderProvider: EmbedderProvider = "local" // Default to local Transformers.js
 	// kilocode_change - start
-	private vectorStoreProvider: "lancedb" | "qdrant" = "qdrant"
+	private vectorStoreProvider: "lancedb" | "qdrant" = "lancedb" // Default to LanceDB (fully local)
 	private lancedbVectorStoreDirectory?: string
 	// kilocode_change - end
 	private modelId?: string
@@ -89,15 +89,15 @@ export class CodeIndexConfigManager {
 	private _loadAndSetConfiguration(): void {
 		// Load configuration from storage
 		const codebaseIndexConfig = this.contextProxy?.getGlobalState("codebaseIndexConfig") ?? {
-			codebaseIndexEnabled: false,
+			codebaseIndexEnabled: true, // Default enabled with local embeddings
 			codebaseIndexQdrantUrl: "http://localhost:6333",
-			codebaseIndexEmbedderProvider: "openai",
+			codebaseIndexEmbedderProvider: "local", // Default to local Transformers.js
 			// kilocode_change - start
-			codebaseIndexVectorStoreProvider: "qdrant",
+			codebaseIndexVectorStoreProvider: "lancedb", // Default to LanceDB (fully local)
 			codebaseIndexLancedbVectorStoreDirectory: undefined,
 			// kilocode_change - end
 			codebaseIndexEmbedderBaseUrl: "",
-			codebaseIndexEmbedderModelId: "",
+			codebaseIndexEmbedderModelId: "all-MiniLM-L6-v2",
 			codebaseIndexSearchMinScore: undefined,
 			codebaseIndexSearchMaxResults: undefined,
 			// kilocode_change start
@@ -123,7 +123,7 @@ export class CodeIndexConfigManager {
 			// kilocode_change end
 		} = codebaseIndexConfig
 		// kilocode_change
-		const codebaseIndexVectorStoreProvider = codebaseIndexConfig.codebaseIndexVectorStoreProvider ?? "qdrant"
+		const codebaseIndexVectorStoreProvider = codebaseIndexConfig.codebaseIndexVectorStoreProvider ?? "lancedb"
 
 		const openAiKey = this.contextProxy?.getSecret("codeIndexOpenAiKey") ?? ""
 		const qdrantApiKey = this.contextProxy?.getSecret("codeIndexQdrantApiKey") ?? ""
@@ -186,6 +186,8 @@ export class CodeIndexConfigManager {
 			this.embedderProvider = "bedrock"
 		} else if (codebaseIndexEmbedderProvider === "openrouter") {
 			this.embedderProvider = "openrouter"
+		} else if (codebaseIndexEmbedderProvider === "local") {
+			this.embedderProvider = "local"
 		} else {
 			this.embedderProvider = "openai"
 		}
@@ -349,6 +351,14 @@ export class CodeIndexConfigManager {
 			const qdrantUrl = this.qdrantUrl
 			const isConfigured = !!(apiKey && qdrantUrl)
 			return isConfigured
+		} else if (this.embedderProvider === "local") {
+			// Local embeddings don't require any API keys - just need vector store
+			// For LanceDB, no external URL needed; for Qdrant, need the URL
+			if (this.vectorStoreProvider === "lancedb") {
+				return true // LanceDB + local embeddings = fully local, no external deps
+			}
+			const qdrantUrl = this.qdrantUrl
+			return !!qdrantUrl
 		}
 		return false // Should not happen if embedderProvider is always set correctly
 	}

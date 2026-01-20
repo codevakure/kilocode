@@ -693,6 +693,8 @@ export async function presentAssistantMessage(cline: Task) {
 				if (state?.yoloMode) {
 					// If gatekeeper is configured, use it to evaluate the approval
 					const approved = await evaluateGatekeeperApproval(cline, block.name, block.params)
+					// Finalize the partial message to stop the spinner (without waiting for user response)
+					await cline.finalizePartialAsk(type, partialMessage)
 					if (!approved) {
 						// Gatekeeper denied the action
 						pushToolResult(formatResponse.toolDenied())

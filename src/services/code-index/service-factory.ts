@@ -7,6 +7,7 @@ import { MistralEmbedder } from "./embedders/mistral"
 import { VercelAiGatewayEmbedder } from "./embedders/vercel-ai-gateway"
 import { BedrockEmbedder } from "./embedders/bedrock"
 import { OpenRouterEmbedder } from "./embedders/openrouter"
+import { LocalEmbedder } from "./embedders/local"
 import { EmbedderProvider, getDefaultModelId, getModelDimension } from "../../shared/embeddingModels"
 import { QdrantVectorStore } from "./vector-store/qdrant-client"
 import { LanceDBVectorStore } from "./vector-store/lancedb-vector-store"
@@ -100,6 +101,9 @@ export class CodeIndexServiceFactory {
 				undefined, // maxItemTokens
 				config.openRouterOptions.specificProvider,
 			)
+		} else if (provider === "local") {
+			// Local embeddings using Transformers.js - no API key required!
+			return new LocalEmbedder(config.modelId)
 		}
 
 		throw new Error(

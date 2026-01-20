@@ -195,6 +195,16 @@ const createValidationSchema = (provider: EmbedderProvider, t: any) => {
 					.min(1, t("settings:codeIndex.validation.modelSelectionRequired")),
 			})
 
+		case "local":
+			// Local embeddings don't require API keys - just model selection
+			// For local + LanceDB: completely local, no external services needed
+			return z.object({
+				codebaseIndexEnabled: z.boolean(),
+				codebaseIndexQdrantUrl: z.string().optional(), // Optional for local + lancedb
+				codeIndexQdrantApiKey: z.string().optional(),
+				codebaseIndexEmbedderModelId: z.string().optional(), // Has default
+			})
+
 		default:
 			return baseSchema
 	}
@@ -238,18 +248,18 @@ export const CodeIndexPopover: React.FC<CodeIndexPopoverProps> = ({
 	const [isDiscardDialogShow, setDiscardDialogShow] = useState(false)
 	const confirmDialogHandler = useRef<(() => void) | null>(null)
 
-	// Default settings template
+	// Default settings template - defaults to local embeddings + LanceDB for zero-config
 	const getDefaultSettings = (): LocalCodeIndexSettings => ({
 		codebaseIndexEnabled: true,
 		codebaseIndexQdrantUrl: "",
-		codebaseIndexEmbedderProvider: "openai",
+		codebaseIndexEmbedderProvider: "local", // Default to local Transformers.js
 		// kilocode_change - start
-		codebaseIndexVectorStoreProvider: "qdrant",
+		codebaseIndexVectorStoreProvider: "lancedb", // Default to LanceDB (fully local)
 		codebaseIndexLancedbVectorStoreDirectory: undefined,
 		// kilocode_change - end
 		codebaseIndexEmbedderBaseUrl: "",
-		codebaseIndexEmbedderModelId: "",
-		codebaseIndexEmbedderModelDimension: undefined,
+		codebaseIndexEmbedderModelId: "all-MiniLM-L6-v2",
+		codebaseIndexEmbedderModelDimension: 384, // all-MiniLM-L6-v2 dimension
 		codebaseIndexSearchMaxResults: CODEBASE_INDEX_DEFAULTS.DEFAULT_SEARCH_RESULTS,
 		codebaseIndexSearchMinScore: CODEBASE_INDEX_DEFAULTS.DEFAULT_SEARCH_MIN_SCORE,
 		codebaseIndexEmbeddingBatchSize: CODEBASE_INDEX_DEFAULTS.DEFAULT_EMBEDDING_BATCH_SIZE,
@@ -871,6 +881,9 @@ export const CodeIndexPopover: React.FC<CodeIndexPopoverProps> = ({
 												<SelectValue />
 											</SelectTrigger>
 											<SelectContent>
+												<SelectItem value="local">
+													{t("settings:codeIndex.localProvider")}
+												</SelectItem>
 												<SelectItem value="openai">
 													{t("settings:codeIndex.openaiProvider")}
 												</SelectItem>
@@ -1047,6 +1060,17 @@ export const CodeIndexPopover: React.FC<CodeIndexPopoverProps> = ({
 												)}
 											</div>
 										</>
+									)}
+
+									{currentSettings.codebaseIndexEmbedderProvider === "local" && (
+										<div className="space-y-2">
+											<p className="text-sm text-vscode-descriptionForeground">
+												{t("settings:codeIndex.localProviderDescription")}
+											</p>
+											<p className="text-xs text-vscode-descriptionForeground opacity-75">
+												Model: all-MiniLM-L6-v2 (384 dimensions, ~90MB download)
+											</p>
+										</div>
 									)}
 
 									{currentSettings.codebaseIndexEmbedderProvider === "openai-compatible" && (

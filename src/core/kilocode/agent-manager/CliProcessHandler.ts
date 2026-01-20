@@ -209,11 +209,26 @@ export class CliProcessHandler {
 		})
 		const env = this.buildEnvWithApiConfiguration(options?.apiConfiguration, options?.shellPath)
 
-		// On Windows, batch files must be launched via cmd.exe to handle paths with spaces reliably.
-		const isWindowsBatch =
-			process.platform === "win32" && [".cmd", ".bat"].includes(path.extname(cliPath).toLowerCase())
-		const spawnCommand = isWindowsBatch ? process.env.ComSpec || "cmd.exe" : cliPath
-		const spawnArgs = isWindowsBatch ? ["/d", "/s", "/c", cliPath, ...cliArgs] : cliArgs
+		// Determine how to spawn the CLI based on file type and platform
+		const cliExt = path.extname(cliPath).toLowerCase()
+		const isWindowsBatch = process.platform === "win32" && [".cmd", ".bat"].includes(cliExt)
+		const isJsFile = cliExt === ".js"
+
+		let spawnCommand: string
+		let spawnArgs: string[]
+
+		if (isWindowsBatch) {
+			// On Windows, batch files must be launched via cmd.exe to handle paths with spaces reliably.
+			spawnCommand = process.env.ComSpec || "cmd.exe"
+			spawnArgs = ["/d", "/s", "/c", cliPath, ...cliArgs]
+		} else if (isJsFile) {
+			// JS files need to be run with node
+			spawnCommand = process.execPath // Use the same node that's running VS Code
+			spawnArgs = [cliPath, ...cliArgs]
+		} else {
+			spawnCommand = cliPath
+			spawnArgs = cliArgs
+		}
 
 		this.debugLog(`Command: ${spawnCommand} ${spawnArgs.join(" ")}`)
 		this.debugLog(`Working dir: ${workspace}`)

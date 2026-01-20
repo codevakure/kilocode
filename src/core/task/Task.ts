@@ -329,6 +329,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	consecutiveMistakeCount: number = 0
 	consecutiveMistakeLimit: number
 	consecutiveMistakeCountForApplyDiff: Map<string, number> = new Map()
+	consecutiveMistakeCountForEditFile: Map<string, number> = new Map()
 	consecutiveNoToolUseCount: number = 0
 	consecutiveNoAssistantMessagesCount: number = 0
 	toolUsage: ToolUsage = {}
@@ -1178,6 +1179,24 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		}
 		return ts
 	}
+
+	// kilocode_change start: Finalize partial ask message without waiting for response (for YOLO mode)
+	/**
+	 * Finalizes a partial ask message by setting partial=false without waiting for user response.
+	 * This is used in YOLO mode to stop the spinner without blocking on user input.
+	 * @param type The ask type to match
+	 * @param text The new text content for the message
+	 */
+	public async finalizePartialAsk(type: ClineAsk, text?: string): Promise<void> {
+		const lastMessage = this.clineMessages.at(-1)
+		if (lastMessage && lastMessage.partial && lastMessage.type === "ask" && lastMessage.ask === type) {
+			lastMessage.text = text
+			lastMessage.partial = false
+			await this.saveClineMessages()
+			this.updateClineMessage(lastMessage)
+		}
+	}
+	// kilocode_change end
 
 	// Note that `partial` has three valid states true (partial message),
 	// false (completion of partial message), undefined (individual complete

@@ -10,7 +10,8 @@ export type EmbedderProvider =
 	| "mistral"
 	| "vercel-ai-gateway"
 	| "bedrock"
-	| "openrouter" // Add other providers as needed
+	| "openrouter"
+	| "local" // Local Transformers.js embeddings (runs 100% locally)
 
 export interface EmbeddingModelProfile {
 	dimension: number
@@ -103,6 +104,11 @@ export const EMBEDDING_MODEL_PROFILES: EmbeddingModelProfiles = {
 		"qwen/qwen3-embedding-0.6b": { dimension: 1024, scoreThreshold: 0.4 },
 		"qwen/qwen3-embedding-4b": { dimension: 2560, scoreThreshold: 0.4 },
 		"qwen/qwen3-embedding-8b": { dimension: 4096, scoreThreshold: 0.4 },
+	},
+	// Local Transformers.js model (runs 100% locally, no API calls)
+	// Using all-MiniLM-L6-v2: ~90MB, fast, works well on 8GB RAM laptops
+	local: {
+		"all-MiniLM-L6-v2": { dimension: 384, scoreThreshold: 0.4 },
 	},
 }
 
@@ -201,6 +207,9 @@ export function getDefaultModelId(provider: EmbedderProvider): string {
 			return "amazon.titan-embed-text-v2:0"
 		case "openrouter":
 			return "openai/text-embedding-3-large"
+
+		case "local":
+			return "all-MiniLM-L6-v2" // Fast, lightweight local model
 
 		default:
 			// Fallback for unknown providers

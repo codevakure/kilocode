@@ -29,11 +29,9 @@ async function main() {
 		format: "cjs",
 		sourcesContent: false,
 		platform: "node",
-		// kilocode_change start: for ps-list
-		banner: {
-			js: "const __importMetaUrl = typeof __filename !== 'undefined' ? require('url').pathToFileURL(__filename).href : undefined;",
-		},
-		// kilocode_change end
+		// Inject import.meta.url polyfill for @xenova/transformers ESM compatibility
+		inject: [path.join(__dirname, "scripts/importMetaUrl.js")],
+		define: { "import.meta.url": "importMetaUrl" },
 	}
 
 	const srcDir = __dirname
@@ -49,24 +47,6 @@ async function main() {
 	 * @type {import('esbuild').Plugin[]}
 	 */
 	const plugins = [
-		// kilocode_change start
-		{
-			name: "import-meta-url-plugin",
-			setup(build) {
-				build.onLoad({ filter: /\.js$/ }, async (args) => {
-					const fs = await import("fs")
-					let contents = await fs.promises.readFile(args.path, "utf8")
-
-					// Replace import.meta.url with our polyfill
-					if (contents.includes("import.meta.url")) {
-						contents = contents.replace(/import\.meta\.url/g, "__importMetaUrl")
-					}
-
-					return { contents, loader: "js" }
-				})
-			},
-		},
-		// kilocode_change end
 		{
 			name: "copyFiles",
 			setup(build) {
@@ -105,6 +85,23 @@ async function main() {
 						}
 					} catch (error) {
 						console.error(`[${name}] Failed to copy JSDOM xhr-sync-worker.js:`, error.message)
+					}
+
+					// Copy onnxruntime-node native binaries (like Continue does)
+					// The bin/ folder must be copied to dist/bin/ preserving structure
+					try {
+						const require = createRequire(import.meta.url)
+						const onnxPkgPath = require.resolve("onnxruntime-node/package.json")
+						const onnxDir = path.dirname(onnxPkgPath)
+						const onnxBinDir = path.join(onnxDir, "bin")
+						const destBinDir = path.join(distDir, "bin")
+
+						if (fs.existsSync(onnxBinDir)) {
+							fs.cpSync(onnxBinDir, destBinDir, { recursive: true })
+							console.log(`[${name}] Copied onnxruntime-node bin/ to dist/bin/`)
+						}
+					} catch (error) {
+						console.error(`[${name}] Failed to copy onnxruntime-node binaries:`, error.message)
 					}
 				})
 			},
@@ -147,7 +144,17 @@ async function main() {
 		plugins,
 		entryPoints: ["extension.ts"],
 		outfile: "dist/extension.js",
-		external: ["vscode", "esbuild", "@lancedb/lancedb"],
+		external: [
+			"vscode",
+			"esbuild",
+			"@lancedb/lancedb",
+		],
+		alias: {
+			// Shim sharp (image processing) - not needed for text embeddings
+			"sharp": path.resolve(__dirname, "shims/sharp.js"),
+			// Redirect onnxruntime-node to our shim that loads from dist/bin/
+			"onnxruntime-node": path.resolve(__dirname, "shims/onnxruntime-node.js"),
+		},
 	}
 
 	/**

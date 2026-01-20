@@ -1,4 +1,5 @@
 import { spawn } from "child_process"
+import * as path from "path"
 
 /**
  * Model information returned from CLI models command
@@ -116,8 +117,27 @@ export async function fetchAvailableModels(
 			resolve(result)
 		}
 
+		// Determine how to spawn the CLI based on file type
+		const cliExt = path.extname(cliPath).toLowerCase()
+		const isWindowsBatch = process.platform === "win32" && [".cmd", ".bat"].includes(cliExt)
+		const isJsFile = cliExt === ".js"
+
+		let spawnCommand: string
+		let spawnArgs: string[]
+
+		if (isWindowsBatch) {
+			spawnCommand = process.env.ComSpec || "cmd.exe"
+			spawnArgs = ["/d", "/s", "/c", cliPath, "models", "--json"]
+		} else if (isJsFile) {
+			spawnCommand = process.execPath
+			spawnArgs = [cliPath, "models", "--json"]
+		} else {
+			spawnCommand = cliPath
+			spawnArgs = ["models", "--json"]
+		}
+
 		// Spawn CLI process
-		const proc = spawn(cliPath, ["models", "--json"], {
+		const proc = spawn(spawnCommand, spawnArgs, {
 			stdio: ["ignore", "pipe", "pipe"],
 			timeout: timeoutMs,
 		})

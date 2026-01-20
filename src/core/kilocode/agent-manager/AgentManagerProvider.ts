@@ -475,8 +475,24 @@ export class AgentManagerProvider implements vscode.Disposable {
 		})
 	}
 
+	/**
+	 * Get the active workspace folder (based on active editor, or first workspace if none)
+	 */
+	private getActiveWorkspaceFolder(): string | undefined {
+		// Try to get workspace from active editor first
+		const activeEditor = vscode.window.activeTextEditor
+		if (activeEditor) {
+			const workspaceFolder = vscode.workspace.getWorkspaceFolder(activeEditor.document.uri)
+			if (workspaceFolder) {
+				return workspaceFolder.uri.fsPath
+			}
+		}
+		// Fallback to first workspace folder
+		return vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+	}
+
 	private async initializeCurrentGitUrl(): Promise<void> {
-		const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+		const workspaceFolder = this.getActiveWorkspaceFolder()
 		if (!workspaceFolder) {
 			return
 		}
@@ -497,7 +513,7 @@ export class AgentManagerProvider implements vscode.Disposable {
 	 */
 	private getWorktreeManager(): WorktreeManager {
 		if (!this.worktreeManager) {
-			const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+			const workspaceFolder = this.getActiveWorkspaceFolder()
 			if (!workspaceFolder) {
 				throw new Error("No workspace folder open")
 			}
@@ -528,7 +544,7 @@ export class AgentManagerProvider implements vscode.Disposable {
 		// Get workspace folder early to fetch git URL before spawning
 		// Note: we intentionally allow starting parallel mode from within an existing git worktree.
 		// Git worktrees share a common .git dir, so `git worktree add/remove` still works from a worktree root.
-		const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+		const workspaceFolder = this.getActiveWorkspaceFolder()
 
 		// Get git URL for the workspace (used for filtering sessions)
 		let gitUrl: string | undefined
@@ -635,7 +651,7 @@ export class AgentManagerProvider implements vscode.Disposable {
 		},
 		onSetupFailed?: () => void,
 	): Promise<boolean> {
-		const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+		const workspaceFolder = this.getActiveWorkspaceFolder()
 		if (!workspaceFolder) {
 			this.outputChannel.appendLine("ERROR: No workspace folder open")
 			onSetupFailed?.()
@@ -644,6 +660,9 @@ export class AgentManagerProvider implements vscode.Disposable {
 
 		// Use effective workspace (worktree path) if provided, otherwise use workspace folder
 		const workspace = options.effectiveWorkspace || workspaceFolder
+		this.outputChannel.appendLine(`[AgentManager] === Starting CLI ===`)
+		this.outputChannel.appendLine(`[AgentManager] Workspace folder: ${workspaceFolder}`)
+		this.outputChannel.appendLine(`[AgentManager] Effective workspace: ${workspace}`)
 
 		const cliDiscovery = await findKilocodeCli((msg) => this.outputChannel.appendLine(`[AgentManager] ${msg}`))
 		if (!cliDiscovery) {

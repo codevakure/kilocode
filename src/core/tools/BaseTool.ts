@@ -48,6 +48,11 @@ export abstract class BaseTool<TName extends ToolName> {
 	abstract readonly name: TName
 
 	/**
+	 * Track the last seen partial path to detect when it stabilizes during streaming.
+	 */
+	protected lastSeenPartialPath: string | undefined
+
+	/**
 	 * Parse XML/legacy string-based parameters into typed parameters.
 	 *
 	 * For XML protocol, this converts params.args (XML string) or params.path (legacy)
@@ -84,6 +89,33 @@ export abstract class BaseTool<TName extends ToolName> {
 	async handlePartial(task: Task, block: ToolUse<TName>): Promise<void> {
 		// Default: no-op for partial messages
 		// Tools can override to show streaming UI updates
+	}
+
+	/**
+	 * Check if a path parameter has stabilized during streaming.
+	 *
+	 * During native tool call streaming, the partial-json library may return truncated
+	 * string values when chunk boundaries fall mid-value. This method tracks the path
+	 * value between consecutive handlePartial() calls and returns true only when the
+	 * path has stopped changing (stabilized).
+	 *
+	 * @param path - The current path value from the partial block
+	 * @returns true if path has stabilized (same value seen twice) and is non-empty, false otherwise
+	 */
+	protected hasPathStabilized(path: string | undefined): boolean {
+		const pathHasStabilized = this.lastSeenPartialPath !== undefined && this.lastSeenPartialPath === path
+		this.lastSeenPartialPath = path
+		return pathHasStabilized && !!path
+	}
+
+	/**
+	 * Reset the partial state tracking.
+	 *
+	 * Should be called at the end of execute() (both success and error paths)
+	 * to ensure clean state for the next tool invocation.
+	 */
+	resetPartialState(): void {
+		this.lastSeenPartialPath = undefined
 	}
 
 	/**

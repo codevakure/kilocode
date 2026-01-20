@@ -235,21 +235,12 @@ export class WriteToFileTool extends BaseTool<"write_to_file"> {
 		}
 	}
 
-	// Track the last seen path during streaming to detect when the path has stabilized
-	private lastSeenPartialPath: string | undefined = undefined
-
 	override async handlePartial(task: Task, block: ToolUse<"write_to_file">): Promise<void> {
 		const relPath: string | undefined = block.params.path
 		let newContent: string | undefined = block.params.content
 
-		// During streaming, the partial-json library may return truncated string values
-		// when chunk boundaries fall mid-value. To avoid creating files at incorrect paths,
-		// we wait until the path stops changing between consecutive partial blocks before
-		// creating the file. This ensures we have the complete, final path value.
-		const pathHasStabilized = this.lastSeenPartialPath !== undefined && this.lastSeenPartialPath === relPath
-		this.lastSeenPartialPath = relPath
-
-		if (!pathHasStabilized || !relPath || newContent === undefined) {
+		// Wait for path to stabilize before showing UI (prevents truncated paths)
+		if (!this.hasPathStabilized(relPath) || !relPath || newContent === undefined) {
 			return
 		}
 
@@ -305,13 +296,6 @@ export class WriteToFileTool extends BaseTool<"write_to_file"> {
 				false,
 			)
 		}
-	}
-
-	/**
-	 * Reset state when the tool finishes (called from execute or on error)
-	 */
-	resetPartialState(): void {
-		this.lastSeenPartialPath = undefined
 	}
 }
 
