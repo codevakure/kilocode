@@ -1,5 +1,13 @@
 # @kilocode/core-schemas
 
+## 0.0.3
+
+### Patch Changes
+
+- [#5359](https://github.com/Kilo-Org/kilocode/pull/5359) [`e4076d9`](https://github.com/Kilo-Org/kilocode/commit/e4076d9d21c5a6a6c3ef34480f962c24c19cac54) Thanks [@PeterDaveHello](https://github.com/PeterDaveHello)! - Add missing openai-codex provider type definition
+
+- [#5374](https://github.com/Kilo-Org/kilocode/pull/5374) [`1f06759`](https://github.com/Kilo-Org/kilocode/commit/1f06759572de5d20e897d2392660b13d6e51ec39) Thanks [@PeterDaveHello](https://github.com/PeterDaveHello)! - Add openai-responses provider support in CLI config validation.
+
 ## 0.0.2
 
 ### Patch Changes

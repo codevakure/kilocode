@@ -1,5 +1,15 @@
 # @kilocode/cli
 
+## 0.26.1
+
+### Patch Changes
+
+- [#5374](https://github.com/Kilo-Org/kilocode/pull/5374) [`1f06759`](https://github.com/Kilo-Org/kilocode/commit/1f06759572de5d20e897d2392660b13d6e51ec39) Thanks [@PeterDaveHello](https://github.com/PeterDaveHello)! - Add openai-responses provider support in CLI config validation.
+
+- Updated dependencies [[`e4076d9`](https://github.com/Kilo-Org/kilocode/commit/e4076d9d21c5a6a6c3ef34480f962c24c19cac54), [`1f06759`](https://github.com/Kilo-Org/kilocode/commit/1f06759572de5d20e897d2392660b13d6e51ec39)]:
+    - @kilocode/core-schemas@0.0.3
+    - @kilocode/agent-runtime@0.0.2
+
 ## 0.26.0
 
 ### Minor Changes
