@@ -1,5 +1,14 @@
 # kilo-code
 
+## 4.153.1
+
+### Patch Changes
+
+- [#5373](https://github.com/Kilo-Org/kilocode/pull/5373) [`cb41705`](https://github.com/Kilo-Org/kilocode/commit/cb41705691d4be7dc915d9d2f42fbcfaa033d9a8) Thanks [@sebastiand-cerebras](https://github.com/sebastiand-cerebras)! - Set default temperature to 1.0 for Cerebras zai-glm-4.7 model
+
+- Updated dependencies [[`e4076d9`](https://github.com/Kilo-Org/kilocode/commit/e4076d9d21c5a6a6c3ef34480f962c24c19cac54), [`1f06759`](https://github.com/Kilo-Org/kilocode/commit/1f06759572de5d20e897d2392660b13d6e51ec39)]:
+    - @kilocode/core-schemas@0.0.3
+
 ## 4.153.0
 
 ### Minor Changes
