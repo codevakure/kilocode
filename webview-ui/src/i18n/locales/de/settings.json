@@ -99,6 +99,7 @@
 		"mistralApiKeyLabel": "API-Schlüssel:",
 		"mistralApiKeyPlaceholder": "Gib deinen Mistral-API-Schlüssel ein",
 		"openaiCompatibleProvider": "OpenAI-kompatibel",
+		"openaiCompatibleResponsesProvider": "OpenAI-kompatibel (Responses)",
 		"openAiKeyLabel": "OpenAI API-Schlüssel",
 		"openAiKeyPlaceholder": "Gib deinen OpenAI API-Schlüssel ein",
 		"openAiCompatibleBaseUrlLabel": "Basis-URL",
@@ -1132,6 +1133,10 @@
 		"showTimestamps": {
 			"label": "Zeitstempel anzeigen",
 			"description": "Zeitstempel für jede Nachricht in der Chat-Ansicht anzeigen"
+		},
+		"showDiffStats": {
+			"label": "Diff-Statistiken anzeigen",
+			"description": "Statistiken zu hinzugefügten/entfernten Zeilen im Aufgaben-Header anzeigen"
 		}
 	},
 	"ghost": {

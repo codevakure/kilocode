@@ -99,6 +99,7 @@
 		"mistralApiKeyLabel": "Clé d'API:",
 		"mistralApiKeyPlaceholder": "Entrez votre clé API Mistral",
 		"openaiCompatibleProvider": "Compatible OpenAI",
+		"openaiCompatibleResponsesProvider": "Compatible OpenAI (Responses)",
 		"openAiKeyLabel": "Clé API OpenAI",
 		"openAiKeyPlaceholder": "Entrez votre clé API OpenAI",
 		"openAiCompatibleBaseUrlLabel": "URL de base",
@@ -1136,6 +1137,10 @@
 		"showTimestamps": {
 			"label": "Afficher les horodatages",
 			"description": "Afficher l'horodatage pour chaque message dans la vue de discussion"
+		},
+		"showDiffStats": {
+			"label": "Afficher les statistiques de diff",
+			"description": "Afficher les statistiques de lignes ajoutées/supprimées dans l'en-tête de la tâche"
 		}
 	},
 	"ghost": {

@@ -94,6 +94,7 @@
 		"openRouterProviderRoutingLabel": "Encaminament de proveïdors d'OpenRouter",
 		"openRouterProviderRoutingDescription": "OpenRouter dirigeix les sol·licituds als millors proveïdors disponibles per al vostre model d'embedding. Per defecte, les sol·licituds s'equilibren entre els principals proveïdors per maximitzar el temps de funcionament. No obstant això, podeu triar un proveïdor específic per utilitzar amb aquest model.",
 		"openaiCompatibleProvider": "Compatible amb OpenAI",
+		"openaiCompatibleResponsesProvider": "Compatible amb OpenAI (Responses)",
 		"openAiKeyLabel": "Clau API OpenAI",
 		"openAiKeyPlaceholder": "Introduïu la vostra clau API OpenAI",
 		"openAiCompatibleBaseUrlLabel": "URL base",
@@ -1136,6 +1137,10 @@
 		"showTimestamps": {
 			"label": "Mostrar marca de temps",
 			"description": "Mostrar la marca de temps per a cada missatge a la vista del xat"
+		},
+		"showDiffStats": {
+			"label": "Mostra estadístiques de diff",
+			"description": "Mostra les estadístiques de línies afegides/eliminades a la capçalera de la tasca"
 		}
 	},
 	"ghost": {

@@ -94,6 +94,7 @@
 		"mistralApiKeyLabel": "API-sleutel:",
 		"mistralApiKeyPlaceholder": "Voer uw Mistral API-sleutel in",
 		"openaiCompatibleProvider": "OpenAI-compatibel",
+		"openaiCompatibleResponsesProvider": "OpenAI-compatibel (Responses)",
 		"openAiKeyLabel": "OpenAI API-sleutel",
 		"openAiKeyPlaceholder": "Voer uw OpenAI API-sleutel in",
 		"openAiCompatibleBaseUrlLabel": "Basis-URL",
@@ -1137,6 +1138,10 @@
 		"showTimestamps": {
 			"label": "Tijdstempels weergeven",
 			"description": "Toon tijdstempel voor elk bericht in de chatweergave"
+		},
+		"showDiffStats": {
+			"label": "Toon diff-statistieken",
+			"description": "Toon statistieken van toegevoegde/verwijderde regels in de taakkop"
 		}
 	},
 	"ghost": {

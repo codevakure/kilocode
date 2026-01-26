@@ -5,7 +5,7 @@
 	"tasks": [
 		{
 			"label": "watch",
-			"dependsOn": ["watch:pnpm", "watch:webview", "watch:bundle", "watch:tsc", "watch:cli"],
+			"dependsOn": ["watch:pnpm", "watch:webview", "watch:bundle", "watch:tsc"],
 			"presentation": {
 				"reveal": "never"
 			},

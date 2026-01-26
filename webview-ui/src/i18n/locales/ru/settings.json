@@ -94,6 +94,7 @@
 		"mistralApiKeyLabel": "Ключ API:",
 		"mistralApiKeyPlaceholder": "Введите свой API-ключ Mistral",
 		"openaiCompatibleProvider": "OpenAI-совместимый",
+		"openaiCompatibleResponsesProvider": "OpenAI-совместимый (Responses)",
 		"openAiKeyLabel": "Ключ API OpenAI",
 		"openAiKeyPlaceholder": "Введите ваш ключ API OpenAI",
 		"openAiCompatibleBaseUrlLabel": "Базовый URL",
@@ -1137,6 +1138,10 @@
 		"showTimestamps": {
 			"label": "Показывать временные метки",
 			"description": "Показывать временную метку для каждого сообщения в представлении чата"
+		},
+		"showDiffStats": {
+			"label": "Показывать статистику изменений",
+			"description": "Отображать статистику добавленных/удалённых строк в заголовке задачи"
 		}
 	},
 	"ghost": {

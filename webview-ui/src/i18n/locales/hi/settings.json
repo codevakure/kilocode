@@ -94,6 +94,7 @@
 		"mistralApiKeyLabel": "API कुंजी:",
 		"mistralApiKeyPlaceholder": "अपनी मिस्ट्रल एपीआई कुंजी दर्ज करें",
 		"openaiCompatibleProvider": "OpenAI संगत",
+		"openaiCompatibleResponsesProvider": "OpenAI संगत (Responses)",
 		"openAiKeyLabel": "OpenAI API कुंजी",
 		"openAiKeyPlaceholder": "अपना OpenAI API कुंजी दर्ज करें",
 		"openAiCompatibleBaseUrlLabel": "आधार URL",
@@ -1137,6 +1138,10 @@
 		"showTimestamps": {
 			"label": "टाइमस्टैम्प दिखाएं",
 			"description": "चैट दृश्य में प्रत्येक संदेश के लिए टाइमस्टैम्प दिखाएं"
+		},
+		"showDiffStats": {
+			"label": "डिफ आँकड़े दिखाएं",
+			"description": "कार्य हेडर में जोड़ी/हटाई गई पंक्तियों के आँकड़े प्रदर्शित करें"
 		}
 	},
 	"ghost": {
