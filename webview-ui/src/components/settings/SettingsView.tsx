@@ -144,13 +144,13 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>((props, ref)
 	const [isDiscardDialogShow, setDiscardDialogShow] = useState(false)
 	const [isChangeDetected, setChangeDetected] = useState(false)
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
-	// Default to "modes" when providers are disabled, otherwise use "providers"
+	// Default to "agentBehaviour" when providers are disabled, otherwise use "providers"
 	const [activeTab, setActiveTab] = useState<SectionName>(
 		targetSection && sectionNames.includes(targetSection as SectionName)
 			? (targetSection as SectionName)
 			: providersEnabledInitial
 				? "providers"
-				: "modes",
+				: "agentBehaviour",
 	)
 
 	const [editingApiConfigName, setEditingApiConfigName] = useState<string>(currentApiConfigName || "default") // kilocode_change: Track which profile is being edited separately from the active profile
